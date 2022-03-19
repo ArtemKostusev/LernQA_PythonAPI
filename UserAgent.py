@@ -10,8 +10,40 @@ class TestUserAgent:
         ("Mozilla/5.0 (iPad; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"),
         ("")
     ]
+    expectedValues = [
+        ("'platform': 'Mobile', 'browser': 'No', 'device': 'Android'"),
+        ("platform': 'Mobile', 'browser': 'Chrome', 'device': 'iOS'"),
+        ("'platform': 'Googlebot', 'browser': 'Unknown', 'device': 'Unknown'"),
+        ("'platform': 'Web', 'browser': 'Chrome', 'device': 'No'"),
+        ("'platform': 'Mobile', 'browser': 'No', 'device': 'iPhone'"),
+        ("'user_agent':'','platform':'Unknown','browser':'Unknown','device':'Unknown'")
+
+    ]
+
     @pytest.mark.parametrize('userAgent', userAgents)
-    def test_user_agent(self, userAgent):
-       response = requests.get ("https://playground.learnqa.ru/ajax/api/user_agent_check",
-                                headers={"User-Agent":userAgent})
-       print(response.text)
+    @pytest.mark.parametrize('expectedValue', expectedValues)
+    def test_user_agent(self, userAgent, expectedValue):
+       url = "https://playground.learnqa.ru/ajax/api/user_agent_check"
+       data = {"User-Agent":userAgent}
+       response = requests.get (url, headers= data)
+
+       # assert response.status_code == 200, 'Wrong status code'
+
+       response_dict = response.json()
+       # assert "platform" in response_dict, 'Поля "platform" нет в response'
+       # assert "browser" in response_dict, 'Поля "platform" нет в response'
+       # assert "device" in response_dict, 'Поля "platform" нет в response'
+
+
+       expected_response = expectedValue
+       actual_response_paltform = response_dict['platform']
+       actual_response_browser = response_dict['browser']
+       actual_response_device = response_dict['device']
+
+       print(expected_response)
+       print (actual_response_paltform)
+       print(actual_response_browser)
+       print(actual_response_device)
+
+
+
